@@ -1,0 +1,33 @@
+/* Footer.scss */
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f0f0f0;
+    padding: 10px 20px;
+    border-top: 1px solid #ddd;
+    color: #333;
+    font-size: 16px;
+  
+    .task-count {
+      flex: 1;
+    }
+  
+    .clear-completed {
+      button {
+        background-color: #ff6961;
+        color: #fff;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+  
+        &:hover {
+          background-color: #d9534f;
+        }
+      }
+    }
+  }
+  

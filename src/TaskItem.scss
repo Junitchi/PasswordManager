@@ -1,0 +1,55 @@
+.task-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc; /* Calm border color */
+    color: #333; /* Calm text color */
+    transition: background-color 0.3s ease;
+  }
+  
+  .completed {
+    background-color: #e5ffe5; /* Calm greenish background for completed tasks */
+  }
+  
+  /* Stylish checkbox for task completion */
+  .task-checkbox {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #4caf50; /* Calm green color for completed tasks */
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    transition: background-color 0.3s ease;
+  
+    &:checked {
+      background-color: #4caf50; /* Green background for completed tasks */
+    }
+  }
+  
+  /* Stylish task description */
+  .task-description {
+    flex-grow: 1;
+    font-size: 16px;
+    word-break: break-all;
+  }
+  
+  /* Delete button */
+  .delete-button {
+    background-color: #e53935; /* Calm red color for delete button */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  
+    &:hover {
+      background-color: #c62828; /* Darker red on hover */
+    }
+  }
+  

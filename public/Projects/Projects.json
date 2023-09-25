@@ -1,0 +1,26 @@
+{
+    "Project 1": {
+        "directory": "directory/to/project1",
+        "Project": "Project 1"
+    },
+    "Project 2": {
+        "directory": "directory/to/project2",
+        "Project": "Project 2"
+    },
+    "Project 3": {
+        "directory": "directory/to/project3",
+        "Project": "Project 3"
+    },
+    "Project 4": {
+        "directory": "directory/to/project4",
+        "Project": "Project 4"
+    },
+    "Project 5": {
+        "directory": "directory/to/project5",
+        "Project": "Project 5"
+    },
+    "Project 6": {
+        "directory": "directory/to/project6",
+        "Project": "Project 6"
+    }
+}
