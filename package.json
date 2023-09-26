@@ -49,5 +49,10 @@
     "electron": "^25.3.1",
     "electron-is-dev": "^2.0.0",
     "wait-on": "^7.0.1"
+  },
+  "resolutions": {
+    "fs": false,
+    "path": false
   }
+  
 }

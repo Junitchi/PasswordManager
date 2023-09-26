@@ -12,8 +12,8 @@ const FilterOptions = ({ filterOption, setFilterOption }) => {
       <label className="filter-label">Filter by:</label>
       <select className="filter-select" onChange={handleFilterChange} value={filterOption}>
         <option value="all">All</option>
-        <option value="completed">Completed</option>
-        <option value="active">Active</option>
+        <option value="favorite">Favorite</option>
+        <option value="regular">Regular</option>
       </select>
     </div>
   );

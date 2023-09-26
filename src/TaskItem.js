@@ -1,4 +1,7 @@
 import React from 'react';
+import "./TaskItem.scss"
+
+const {clipboard} = window.require('electron');
 
 const TaskItem = ({ task, onDeleteTask, onToggleComplete }) => {
   const handleDeleteClick = () => {
@@ -9,15 +12,23 @@ const TaskItem = ({ task, onDeleteTask, onToggleComplete }) => {
     onToggleComplete(task.id);
   };
 
+  const handleCopyClick = () => {
+    clipboard.writeText(task.password);
+  }
+
   return (
-    <div className={`task-item ${task.isComplete ? 'completed' : ''}`}>
+    <div className={`task-item ${task.isFavorite ? 'favorite' : ''}`}>
       <input
         type="checkbox"
-        checked={task.isComplete}
+        checked={task.isFavorite}
         onChange={handleToggleComplete}
       />
-      <span>{task.text}</span>
+      <span>{task.site}</span>
+      <span>{task.username}</span>
+      <span>{task.password}</span>
+      
       <button onClick={handleDeleteClick}>Delete</button>
+      <button onClick={handleCopyClick}>Copy</button>
     </div>
   );
 };
