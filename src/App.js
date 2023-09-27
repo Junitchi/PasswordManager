@@ -4,20 +4,25 @@ import Header from './Header';
 import TaskForm from './TaskForm';
 import TaskList from './TaskList';
 import FilterOptions from './FilterOptions';
+import PasswordForm from './PasswordForm';
+import AuthenticationForm from './AuthenticationForm';
 import Footer from './Footer';
 
 const { ipcRenderer } = window.require('electron');
 
 const App = () => {
+  const [masterPassword, setMasterPassword] = useState('');
+  const [authenticated, setAuthenticated] = useState(false);
+  const [latestPassword, setLatestPassword] = useState('');
   const [tasks, setTasks] = useState([]);
   const [filterOption, setFilterOption] = useState('all');
   const [passwords, setPasswords] = useState("none"); // Use state to store passwords
 
   useEffect(() => {
-    // Send a request to open the JSON file when passwords is "none"
-    if (passwords === "none") {
-      ipcRenderer.send('openJSON');
-    }
+    // // Send a request to open the JSON file when passwords is "none"
+    // if (passwords === "none") {
+    //   ipcRenderer.send('openJSON', latestPassword);
+    // }
 
     // Listen for the response from the main process
     ipcRenderer.on('openJSONResponse', (event, data) => {
@@ -35,6 +40,32 @@ const App = () => {
       ipcRenderer.removeAllListeners('openJSONResponse');
     }
   }, [passwords]); // Only run this effect when passwords changes
+
+  useEffect(() => {
+    if(masterPassword == ''){
+      ipcRenderer.send("loadMasterPassword");
+    }
+
+    ipcRenderer.on('encryptedPassword', (event, data) => {
+      if(data.error){
+        console.error(data.error);
+      } else {
+        console.log(data)
+        setMasterPassword(data);
+
+      }
+    });
+
+    return () => {
+      ipcRenderer.removeAllListeners('encryptedPassword');
+    }
+
+  }, [masterPassword]);
+
+  ipcRenderer.on('authenticateUser', (event, data) => {
+    setAuthenticated(data);
+    ipcRenderer.send('openJSON', latestPassword);
+  });
 
   // Rest of your component code...
 
@@ -55,7 +86,7 @@ const App = () => {
 
 
   const storePasswords = (data) => {
-    ipcRenderer.send('storeJSON', data);
+    ipcRenderer.send('storeJSON', data, latestPassword);
   }
 
   const onDeleteTask = (taskId) => {
@@ -80,23 +111,48 @@ const App = () => {
     setTasks(updatedTasks);
   };
 
+  const handleCheckPassword = () => {
+
+  }
+
   return (
-    <div className="app">
+<div className="app">
       <Header />
       <div className="app-container">
-        <TaskForm onAddTask={onAddTask} />
-        <div className="task-content">
-          <FilterOptions
-            filterOption={filterOption}
-            setFilterOption={setFilterOption}
+        {masterPassword === '' ? (
+          // Display PasswordForm if masterPassword is not set
+          <PasswordForm
+            masterPassword={masterPassword}
+            setMasterPassword={setMasterPassword}
           />
-          <TaskList
-            tasks={tasks}
-            onDeleteTask={onDeleteTask}
-            onToggleComplete={onToggleComplete}
-            filterOption={filterOption}
+        ) : authenticated ? (
+          // Display task-related content if authenticated
+          <>
+            <TaskForm onAddTask={onAddTask} />
+            <div className="task-content">
+              <FilterOptions
+                filterOption={filterOption}
+                setFilterOption={setFilterOption}
+              />
+              <TaskList
+                tasks={tasks}
+                onDeleteTask={onDeleteTask}
+                onToggleComplete={onToggleComplete}
+                filterOption={filterOption}
+              />
+            </div>
+          </>
+        ) : (
+          // Display AuthenticationForm if not authenticated
+          <AuthenticationForm
+            onAuthenticate={(enteredPassword) => {
+              setLatestPassword(enteredPassword);
+              console.log("authentication request")
+              ipcRenderer.send('authenticateMasterPassword', enteredPassword, masterPassword);
+              
+            }}
           />
-        </div>
+        )}
       </div>
     </div>
   );

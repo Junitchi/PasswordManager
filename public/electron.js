@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const isDev = require('electron-is-dev');
 const {getFolderData, loadProjectsFile} = require('./getFolderData');
+const {encryptTextKey, decryptTextKey} = require('./cryptoUtils');
 
 
 function createWindow() {
@@ -48,16 +49,23 @@ app.on('activate', () => {
   }
 });
 
-ipcMain.on('openJSON', async (event) => {
+ipcMain.on('openJSON', async (event, password) => {
+  console.log("password" + password)
   try {
     // Define the path to the JSON file you want to open
     const filePath = path.join(app.getPath('userData'), 'passwords.json');
 
     // Read the JSON file
     const jsonData = fs.readFileSync(filePath, 'utf-8');
-
+    console.log(jsonData)
     // Parse the JSON data
     const parsedData = JSON.parse(jsonData);
+
+    parsedData.forEach(item => {
+      if (item.password) {
+        item.password = decryptTextKey(item.password, password);
+      }
+    });
 
     // Send the parsed JSON data back to the renderer process
     event.sender.send('openJSONResponse', parsedData);
@@ -67,10 +75,16 @@ ipcMain.on('openJSON', async (event) => {
   }
 });
 
-ipcMain.on('storeJSON', async (event, jsonData) => {
+ipcMain.on('storeJSON', async (event, jsonData, password) => {
   try {
     // Define the path where you want to store the JSON file
     const filePath = path.join(app.getPath('userData'), 'passwords.json');
+
+    jsonData.forEach(item => {
+      if (item.password) {
+        item.password = encryptTextKey(item.password, password);
+      }
+    });
 
     // Write the JSON data to the file
     fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2));
@@ -82,3 +96,42 @@ ipcMain.on('storeJSON', async (event, jsonData) => {
     event.sender.send('storeJSONResponse', `Error saving JSON: ${error.message}`);
   }
 });
+
+ipcMain.on('encryptPassword', async(event, password) => {
+  console.log("Encrypting password")
+  try{
+    const filePath = path.join(app.getPath('userData'), 'password.txt');
+    let encryptedPassword = encryptTextKey(password, password);
+    fs.writeFileSync(filePath, encryptedPassword);
+    event.sender.send('encryptedPassword', encryptedPassword);
+  } catch (error){
+    console.log(error)
+    event.sender.send('storeJSONResponse', ``);
+  }
+})
+
+ipcMain.on('authenticateMasterPassword', async(event, enteredPassword, masterPassword) => {
+  console.log("Authentication started", masterPassword, enteredPassword)
+  try{
+    const decryptedPassword = decryptTextKey(masterPassword, enteredPassword);
+    ///HEREEEEEEEEEEEEEEEE
+    console.log(decryptedPassword);
+    event.sender.send('authenticateUser', enteredPassword == decryptedPassword);
+  } catch (error){
+    console.log(error)
+    event.sender.send('storeJSONResponse', false);
+  }
+})
+
+ipcMain.on('loadMasterPassword', async(event) => {
+  try{
+    const filePath = path.join(app.getPath('userData'), 'password.txt');
+    const encryptedPassword = fs.readFileSync(filePath, 'utf-8');
+    // const decryptedPassword = decryptText(encryptText, enteredPassword);
+    ///HEREEEEEEEEEEEEEEEE
+    event.sender.send('encryptedPassword', encryptedPassword);
+  } catch (error){
+    console.log(error)
+    event.sender.send('storeJSONResponse', ``);
+  }
+})
