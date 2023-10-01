@@ -4,7 +4,7 @@ import './PasswordForm.scss';
 
 const {ipcRenderer} = window.require('electron')
 
-const PasswordForm = ({masterPassword, setMasterPassword}) => {
+const PasswordForm = ({masterPassword, setMasterPassword, setLatestPassword}) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -16,6 +16,7 @@ const PasswordForm = ({masterPassword, setMasterPassword}) => {
       // Passwords match, handle submission here
       console.log('Password created successfully!');
       ipcRenderer.send('encryptPassword', password);
+      setLatestPassword(password);
     //   setMasterPassword(password);
     } else {
       // Passwords do not match, show an error

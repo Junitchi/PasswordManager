@@ -18,6 +18,12 @@ const App = () => {
   const [filterOption, setFilterOption] = useState('all');
   const [passwords, setPasswords] = useState("none"); // Use state to store passwords
 
+  ipcRenderer.on('masterPasswordRemoved', (event) => {
+    setMasterPassword('');
+    // setAuthenticated(false);
+    // setLatestPassword('');
+  });
+
   useEffect(() => {
     // // Send a request to open the JSON file when passwords is "none"
     // if (passwords === "none") {
@@ -29,7 +35,7 @@ const App = () => {
       if (data.error) {
         console.error(data.error); // Log the error message
       } else {
-        console.log(data); // Log the parsed JSON data
+        // console.log(data); // Log the parsed JSON data
         setPasswords(data); // Update passwords state
         setTasks(data); // Set tasks with the parsed data
       }
@@ -50,7 +56,7 @@ const App = () => {
       if(data.error){
         console.error(data.error);
       } else {
-        console.log(data)
+        // console.log(data)
         setMasterPassword(data);
 
       }
@@ -86,6 +92,7 @@ const App = () => {
 
 
   const storePasswords = (data) => {
+    console.log(latestPassword);
     ipcRenderer.send('storeJSON', data, latestPassword);
   }
 
@@ -115,6 +122,16 @@ const App = () => {
 
   }
 
+  const handleRemovePassword = () => {
+    ipcRenderer.send("removeMasterPassword");
+  }
+
+  const handleSetNasterPassword = (masterPass) => {
+    setMasterPassword(masterPass);
+    console.log("handle set master", masterPass)
+    storePasswords(tasks);
+  }
+
   return (
 <div className="app">
       <Header />
@@ -123,7 +140,8 @@ const App = () => {
           // Display PasswordForm if masterPassword is not set
           <PasswordForm
             masterPassword={masterPassword}
-            setMasterPassword={setMasterPassword}
+            setMasterPassword={handleSetNasterPassword}
+            setLatestPassword={setLatestPassword}
           />
         ) : authenticated ? (
           // Display task-related content if authenticated
@@ -141,6 +159,7 @@ const App = () => {
                 filterOption={filterOption}
               />
             </div>
+            <button onClick={ handleRemovePassword } >Remove Password</button>
           </>
         ) : (
           // Display AuthenticationForm if not authenticated

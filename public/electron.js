@@ -50,6 +50,7 @@ app.on('activate', () => {
 });
 
 ipcMain.on('openJSON', async (event, password) => {
+  if(password == '') return;
   console.log("password" + password)
   try {
     // Define the path to the JSON file you want to open
@@ -76,10 +77,12 @@ ipcMain.on('openJSON', async (event, password) => {
 });
 
 ipcMain.on('storeJSON', async (event, jsonData, password) => {
+  if(password == '')
+    return;
   try {
     // Define the path where you want to store the JSON file
     const filePath = path.join(app.getPath('userData'), 'passwords.json');
-
+    console.log("encrypting", password)
     jsonData.forEach(item => {
       if (item.password) {
         item.password = encryptTextKey(item.password, password);
@@ -95,6 +98,12 @@ ipcMain.on('storeJSON', async (event, jsonData, password) => {
     // Handle errors and send an error message back to the renderer process
     event.sender.send('storeJSONResponse', `Error saving JSON: ${error.message}`);
   }
+});
+
+ipcMain.on("removeMasterPassword", async(event) => {
+  const filePath = path.join(app.getPath('userData'), 'password.txt');
+  fs.writeFileSync(filePath, '');
+  event.sender.send('masterPasswordRemoved');
 });
 
 ipcMain.on('encryptPassword', async(event, password) => {
