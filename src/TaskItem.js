@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import "./TaskItem.scss"
 
 const {clipboard} = window.require('electron');
 
-const TaskItem = ({ task, onDeleteTask, onToggleComplete }) => {
+const TaskItem = ({ task, onDeleteTask, onToggleComplete, setAuthenticated }) => {
+
+  const [showPassword, setShowPassword] = useState(false);
+
   const handleDeleteClick = () => {
     onDeleteTask(task.id);
   };
@@ -15,6 +18,7 @@ const TaskItem = ({ task, onDeleteTask, onToggleComplete }) => {
   const handleCopyClick = () => {
     clipboard.writeText(task.password);
   }
+  
 
   return (
     <div className={`task-item ${task.isFavorite ? 'favorite' : ''}`}>
@@ -25,7 +29,12 @@ const TaskItem = ({ task, onDeleteTask, onToggleComplete }) => {
       />
       <span>{task.site}</span>
       <span>{task.username}</span>
-      <span>{task.password}</span>
+      <span onClick={() => {
+        // setAuthenticated(false);
+        setShowPassword(!showPassword)
+        }}>
+      { showPassword ? task.password : "****"}
+      </span>
       
       <button onClick={handleDeleteClick}>Delete</button>
       <button onClick={handleCopyClick}>Copy</button>

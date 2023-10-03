@@ -1,7 +1,7 @@
 import React from 'react';
 import TaskItem from './TaskItem';
 
-const TaskList = ({ tasks, onDeleteTask, onToggleComplete, filterOption }) => {
+const TaskList = ({ tasks, onDeleteTask, onToggleComplete, filterOption, setAuthenticated }) => {
   // Filter tasks based on the selected option
   const filteredTasks = filterOption === 'favorite'
     ? tasks.filter(task => task.isFavorite)
@@ -17,6 +17,7 @@ const TaskList = ({ tasks, onDeleteTask, onToggleComplete, filterOption }) => {
           task={task}
           onDeleteTask={onDeleteTask}
           onToggleComplete={onToggleComplete}
+          setAuthenticated={setAuthenticated}
         />
       ))}
     </div>

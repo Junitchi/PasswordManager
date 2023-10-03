@@ -157,9 +157,10 @@ const App = () => {
                 onDeleteTask={onDeleteTask}
                 onToggleComplete={onToggleComplete}
                 filterOption={filterOption}
+                setAuthenticated={setAuthenticated}
               />
             </div>
-            <button onClick={ handleRemovePassword } >Remove Password</button>
+            <button onClick={ handleRemovePassword } >Change MASTER Password</button>
           </>
         ) : (
           // Display AuthenticationForm if not authenticated

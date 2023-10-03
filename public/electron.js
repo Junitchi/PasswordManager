@@ -51,7 +51,7 @@ app.on('activate', () => {
 
 ipcMain.on('openJSON', async (event, password) => {
   if(password == '') return;
-  console.log("password" + password)
+  // console.log("password" + password)
   try {
     // Define the path to the JSON file you want to open
     const filePath = path.join(app.getPath('userData'), 'passwords.json');
